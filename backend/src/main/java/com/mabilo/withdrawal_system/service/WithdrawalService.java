@@ -16,6 +16,7 @@ import com.mabilo.withdrawal_system.model.WithdrawalNotice;
 import com.mabilo.withdrawal_system.repository.InvestorRepository;
 import com.mabilo.withdrawal_system.repository.PortfolioRepository;
 import com.mabilo.withdrawal_system.repository.WithdrawalNoticeRepository;
+import java.time.LocalDate;
 
 import lombok.RequiredArgsConstructor;
 
@@ -83,5 +84,41 @@ public class WithdrawalService {
                         w.getId(), w.getStatus(), w.getType(), w.getAmount(), w.getDateRequested()))
                 .toList();
     }
+public String exportCsv(Long investorId, String type, LocalDate from, LocalDate to) {
 
+    if (!investorRepository.existsById(investorId)) {
+        throw new ResourceNotFoundException("Investor not found with id " + investorId);
+    }
+
+    List<WithdrawalNotice> notices =
+            withdrawalNoticeRepository.findByInvestorIdOrderByDateRequestedDesc(investorId);
+
+    StringBuilder csv = new StringBuilder("Id,Type,Amount,Status,Date Requested\n");
+
+    for (WithdrawalNotice w : notices) {
+
+// Filter by withdrawal type
+    if (type != null && !type.equalsIgnoreCase(w.getType())) {
+        continue;
+    }
+
+    // Filter by start date
+    if (from != null && w.getDateRequested().toLocalDate().isBefore(from)) {
+        continue;
+    }
+
+    // Filter by end date
+    if (to != null && w.getDateRequested().toLocalDate().isAfter(to)) {
+        continue;
+    }
+    
+        csv.append(w.getId()).append(',')
+                .append(w.getType()).append(',')
+                .append(w.getAmount()).append(',')
+                .append(w.getStatus()).append(',')
+                .append(w.getDateRequested()).append('\n');
+    }
+
+    return csv.toString();
+}
 }
