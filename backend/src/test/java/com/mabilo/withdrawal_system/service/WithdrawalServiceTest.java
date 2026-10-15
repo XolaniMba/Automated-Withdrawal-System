@@ -103,4 +103,59 @@ void generalWithdrawal_exceedsBalance_isRejected() {
 
     assertEquals("Withdrawal amount cannot exceed your balance", ex.getMessage());}
 
+    @Test
+    void generalWithdrawal_over90Percent_isRejected() {
+    // Arrange: Withdrawal amount cannot exceed 90% of your balance
+    Investor investor = new Investor(1L, "Test Investor", 40);
+    Portfolio portfolio = new Portfolio(1L, investor, new BigDecimal("100000.00"), null);
+    WithdrawalRequestDTO request =
+            new WithdrawalRequestDTO(1L, new BigDecimal("90001"), "GENERAL");
+
+    when(investorRepository.findById(1L)).thenReturn(Optional.of(investor));
+    when(portfolioRepository.findByInvestorId(1L)).thenReturn(Optional.of(portfolio));
+
+    // Act + Assert
+    BusinessRuleException ex = assertThrows(BusinessRuleException.class,
+            () -> withdrawalService.createWithdrawal(request));
+
+    assertEquals("Withdrawal amount cannot exceed 90% of your balance", ex.getMessage());}
+
+    @Test
+void generalWithdrawal_exactly90Percent_isAllowed() {
+    // Arrange: 90000 is exactly 90% of 100000, which is still allowed
+    Investor investor = new Investor(1L, "Test Investor", 40);
+    Portfolio portfolio = new Portfolio(1L, investor, new BigDecimal("100000.00"), null);
+    WithdrawalRequestDTO request =
+            new WithdrawalRequestDTO(1L, new BigDecimal("90000"), "GENERAL");
+
+    when(investorRepository.findById(1L)).thenReturn(Optional.of(investor));
+    when(portfolioRepository.findByInvestorId(1L)).thenReturn(Optional.of(portfolio));
+    when(withdrawalNoticeRepository.save(any(WithdrawalNotice.class)))
+            .thenAnswer(invocation -> {
+                WithdrawalNotice notice = invocation.getArgument(0);
+                notice.setId(10L);
+                return notice;
+            });
+
+    // Act: no assertThrows, because nothing should be thrown
+    WithdrawalResponseDTO response = withdrawalService.createWithdrawal(request);
+
+    // Assert
+    assertEquals("PENDING", response.getStatus());
+    assertEquals("GENERAL", response.getType());
+    assertEquals(new BigDecimal("90000"), response.getAmount());
+}
+
+    @Test
+void createWithdrawal_unknownInvestor_throwsNotFound() {
+    WithdrawalRequestDTO request =
+            new WithdrawalRequestDTO(99L, new BigDecimal("1000"), "GENERAL");
+
+    when(investorRepository.findById(99L)).thenReturn(Optional.empty());
+
+    ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
+            () -> withdrawalService.createWithdrawal(request));
+
+    assertEquals("Investor not found with id 99", ex.getMessage());
+}
 }
