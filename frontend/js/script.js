@@ -45,3 +45,51 @@ async function loadPortfolio() {
 
 document.getElementById("load-btn").addEventListener("click", loadPortfolio);
 loadPortfolio();
+async function submitWithdrawal(event) {
+    event.preventDefault();
+
+    const investorId = Number(document.getElementById("investor-id").value);
+    const amount = Number(document.getElementById("amount").value);
+    const type = document.getElementById("type").value;
+    const message = document.getElementById("withdrawal-message");
+
+    message.className = "";
+    message.textContent = "";
+
+    // UI validation: catch obvious mistakes before calling the server
+    if (!amount || amount <= 0) {
+        message.textContent = "Enter an amount greater than zero.";
+        message.className = "error";
+        return;
+    }
+    if (!type) {
+        message.textContent = "Select a withdrawal type.";
+        message.className = "error";
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/withdrawals`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ investorId, amount, type })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            message.textContent = data.message;
+            message.className = "error";
+            return;
+        }
+
+        message.textContent =
+            `Withdrawal #${data.id} submitted: ${formatMoney(data.amount)} (${data.status})`;
+        message.className = "success";
+        document.getElementById("withdrawal-form").reset();
+    } catch (error) {
+        message.textContent = "Could not reach the server. Is the backend running?";
+        message.className = "error";
+    }
+}
+
+document.getElementById("withdrawal-form").addEventListener("submit", submitWithdrawal);
