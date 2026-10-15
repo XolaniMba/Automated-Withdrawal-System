@@ -8,9 +8,27 @@
 <body>
     <h1>Mabilo Investments - Withdrawal System</h1>
     <section id="portfolio-dashboard">
-        <h2>Portfolio Dashboard</h2>
-        <p>Porfolio details will go hear</p>
-    </section>
+    <h2>Portfolio Dashboard</h2>
+
+    <label for="investor-id">Investor ID:</label>
+    <input type="number" id="investor-id" value="1" min="1">
+    <button id="load-btn">Load Portfolio</button>
+
+    <p id="portfolio-error" class="error"></p>
+
+    <div id="portfolio-details"></div>
+
+    <table id="products-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Type</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</section>
     
       <section id="withdrawal-form-section">
         <h2>Submit a Withdrawal</h2>
@@ -26,6 +44,6 @@
         <h2> Download Statement</h2>
         <p>Download statement button will go here</p>
     </section>
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
