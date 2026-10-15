@@ -7,6 +7,8 @@ function formatMoney(value) {
     });
 }
 
+// ---------- Portfolio dashboard ----------
+
 async function loadPortfolio() {
     const investorId = document.getElementById("investor-id").value;
     const errorBox = document.getElementById("portfolio-error");
@@ -43,8 +45,52 @@ async function loadPortfolio() {
     }
 }
 
-document.getElementById("load-btn").addEventListener("click", loadPortfolio);
-loadPortfolio();
+// ---------- Withdrawal history ----------
+
+async function loadHistory() {
+    const investorId = document.getElementById("investor-id").value;
+    const message = document.getElementById("history-message");
+    const tbody = document.querySelector("#history-table tbody");
+
+    message.textContent = "";
+    tbody.innerHTML = "";
+
+    try {
+        const response = await fetch(`${API_BASE}/investors/${investorId}/withdrawals`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            message.textContent = data.message;
+            return;
+        }
+
+        if (data.length === 0) {
+            message.textContent = "No withdrawals yet.";
+            return;
+        }
+
+        data.forEach(w => {
+            const row = document.createElement("tr");
+            [
+                w.id,
+                w.type,
+                formatMoney(w.amount),
+                w.status,
+                new Date(w.dateRequested).toLocaleString("en-ZA")
+            ].forEach(value => {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        message.textContent = "Could not reach the server. Is the backend running?";
+    }
+}
+
+// ---------- Withdrawal form ----------
+
 async function submitWithdrawal(event) {
     event.preventDefault();
 
@@ -86,10 +132,22 @@ async function submitWithdrawal(event) {
             `Withdrawal #${data.id} submitted: ${formatMoney(data.amount)} (${data.status})`;
         message.className = "success";
         document.getElementById("withdrawal-form").reset();
+        loadHistory();
     } catch (error) {
         message.textContent = "Could not reach the server. Is the backend running?";
         message.className = "error";
     }
 }
 
+// ---------- Wire everything up ----------
+
+document.getElementById("load-btn").addEventListener("click", () => {
+    loadPortfolio();
+    loadHistory();
+});
+
 document.getElementById("withdrawal-form").addEventListener("submit", submitWithdrawal);
+
+// Load data when the page opens
+loadPortfolio();
+loadHistory();
