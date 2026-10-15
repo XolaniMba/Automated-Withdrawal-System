@@ -138,6 +138,60 @@ async function submitWithdrawal(event) {
         message.className = "error";
     }
 }
+// ---------- CSV download ----------
+
+async function downloadCsv() {
+    const investorId = document.getElementById("investor-id").value;
+    const type = document.getElementById("csv-type").value;
+    const from = document.getElementById("csv-from").value;
+    const to = document.getElementById("csv-to").value;
+    const message = document.getElementById("csv-message");
+
+    message.className = "";
+    message.textContent = "";
+
+    if (from && to && from > to) {
+        message.textContent = "The 'From' date must not be after the 'To' date.";
+        message.className = "error";
+        return;
+    }
+
+    const params = new URLSearchParams();
+    if (type) params.append("type", type);
+    if (from) params.append("from", from);
+    if (to) params.append("to", to);
+
+    const query = params.toString();
+    const url = `${API_BASE}/investors/${investorId}/withdrawals/export${query ? "?" + query : ""}`;
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            const data = await response.json();
+            message.textContent = data.message;
+            message.className = "error";
+            return;
+        }
+
+        const blob = await response.blob();
+
+        const fileUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = fileUrl;
+        link.download = "withdrawals.csv";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(fileUrl);
+
+        message.textContent = "Statement downloaded.";
+        message.className = "success";
+    } catch (error) {
+        message.textContent = "Could not reach the server. Is the backend running?";
+        message.className = "error";
+    }
+}
 
 // ---------- Wire everything up ----------
 
@@ -147,6 +201,8 @@ document.getElementById("load-btn").addEventListener("click", () => {
 });
 
 document.getElementById("withdrawal-form").addEventListener("submit", submitWithdrawal);
+
+document.getElementById("csv-btn").addEventListener("click", downloadCsv);
 
 // Load data when the page opens
 loadPortfolio();

@@ -72,10 +72,26 @@
         </table>
     </section>
 
-    <section id="csv-download">
-        <h2>Download Statement</h2>
-        <p>CSV download button will go here.</p>
-    </section>
+<section id="csv-download">
+    <h2>Download Statement</h2>
+
+    <label for="csv-type">Type:</label>
+    <select id="csv-type">
+        <option value="">All</option>
+        <option value="GENERAL">General</option>
+        <option value="RETIREMENT">Retirement</option>
+    </select>
+
+    <label for="csv-from">From:</label>
+    <input type="date" id="csv-from">
+
+    <label for="csv-to">To:</label>
+    <input type="date" id="csv-to">
+
+    <button id="csv-btn">Download CSV</button>
+
+    <p id="csv-message"></p>
+</section>
 
     <script src="js/script.js"></script>
 
