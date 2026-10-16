@@ -1,0 +1,202 @@
+.error {
+    color: #b00020;
+}
+
+.success {
+    color: #1b7f3b;
+}
+
+table {
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    text-align: left;
+} 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap");
+
+:root {
+    --bg: #f7f5f1;
+    --surface: #ffffff;
+    --text: #161b22;
+    --muted: #5b616b;
+    --border: #e4e0d8;
+    --teal: #1f8a7d;
+    --navy: #1b2a4a;
+    --terminal: #121a2e;
+    --error: #b3261e;
+    --success: #1f8a7d;
+
+    --font-heading: "Space Grotesk", system-ui, sans-serif;
+    --font-body: "Inter", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", Consolas, monospace;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+    line-height: 1.5;
+}
+
+h1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 40px;
+    font-family: var(--font-heading);
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+h1::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--teal);
+}
+
+section {
+    padding: 28px 0;
+    border-top: 1px solid var(--border);
+}
+
+h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 18px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal);
+}
+
+h2::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: var(--teal);
+}
+
+label {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-right: 6px;
+}
+
+input,
+select {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    margin-right: 12px;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(31, 138, 125, 0.15);
+}
+
+button {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 999px;
+    background: var(--navy);
+    color: #ffffff;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--teal);
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+#portfolio-details {
+    margin: 18px 0 8px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: var(--terminal);
+    color: #e8ecf3;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    box-shadow: 0 12px 30px rgba(18, 26, 46, 0.15);
+}
+
+#portfolio-details::before {
+    content: "$ ";
+    color: var(--teal);
+}
+
+#portfolio-details:empty {
+    display: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 0.95rem;
+}
+
+th,
+td {
+    padding: 10px 12px 10px 0;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+tbody tr:hover {
+    background: rgba(31, 138, 125, 0.05);
+}
+
+.error {
+    color: var(--error);
+}
+
+.success {
+    color: var(--success);
+}
+
+@media (max-width: 600px) {
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}
